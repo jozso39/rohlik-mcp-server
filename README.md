@@ -71,14 +71,14 @@ Once the server is running, you can interact with it through HTTP requests. The 
     }
     ```
 
-#### Add Ingredient to Shopping List
-- **URL**: `/add_ingredient`
+#### Add Multiple Ingredients to Shopping List
+- **URL**: `/add_ingredients`
 - **Method**: `POST`
 - **Content-Type**: `application/json`
 - **Request Body**:
   ```json
   {
-      "ingredient": "Mléko"
+      "ingredients": ["Mléko", "Cibule", "Chléb"]
   }
   ```
 - **Success Response**:
@@ -86,8 +86,8 @@ Once the server is running, you can interact with it through HTTP requests. The 
   - **Content**:
     ```json
     {
-        "message": "Ingredient added",
-        "shopping_list": ["Mléko"]
+        "message": "3 ingredients added",
+        "shopping_list": ["Mléko", "Cibule", "Chléb"]
     }
     ```
 - **Error Responses**:
@@ -102,7 +102,15 @@ Once the server is running, you can interact with it through HTTP requests. The 
     ```
     or
     ```json
-    {"error": "No ingredient provided"}
+    {"error": "No ingredients provided"}
+    ```
+    or
+    ```json
+    {"error": "Ingredients must be an array"}
+    ```
+    or
+    ```json
+    {"error": "Ingredients array is empty"}
     ```
 
 #### Get Shopping List
@@ -133,11 +141,11 @@ Once the server is running, you can interact with it through HTTP requests. The 
 
 ### Example Usage with cURL
 
-1. Add an ingredient:
+1. Add multiple ingredients:
 ```bash
-curl -X POST http://localhost:5000/add_ingredient \
+curl -X POST http://localhost:5000/add_ingredients \
   -H "Content-Type: application/json" \
-  -d '{"ingredient": "Mléko"}'
+  -d '{"ingredients": ["Mléko", "Cibule", "Chléb"]}'
 ```
 
 2. Get the shopping list:

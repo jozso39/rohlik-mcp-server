@@ -8,8 +8,8 @@ app = Flask(__name__)
 shopping_list_manager = ShoppingListManager()
 recipes = load_recipes('data/Recipes.csv')
 
-@app.route('/add_ingredient', methods=['POST'])
-def add_ingredient():
+@app.route('/add_ingredients', methods=['POST'])
+def add_ingredients():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
     
@@ -17,13 +17,21 @@ def add_ingredient():
     if not data:
         return jsonify({"error": "Invalid JSON"}), 400
         
-    ingredient = data.get('ingredient')
-    if not ingredient:
-        return jsonify({"error": "No ingredient provided"}), 400
-        
-    shopping_list_manager.add_ingredient(ingredient)
+    ingredients = data.get('ingredients')
+    if not ingredients:
+        return jsonify({"error": "No ingredients provided"}), 400
+    
+    if not isinstance(ingredients, list):
+        return jsonify({"error": "Ingredients must be an array"}), 400
+    
+    if not ingredients:
+        return jsonify({"error": "Ingredients array is empty"}), 400
+    
+    for ingredient in ingredients:
+        shopping_list_manager.add_ingredient(ingredient)
+    
     return jsonify({
-        "message": "Ingredient added",
+        "message": f"{len(ingredients)} ingredients added",
         "shopping_list": shopping_list_manager.get_list()
     }), 200
 
