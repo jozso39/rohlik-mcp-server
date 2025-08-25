@@ -67,7 +67,7 @@ def search_recipes():
     if name:
         filtered_recipes = [
             recipe for recipe in filtered_recipes 
-            if name.lower() in recipe['name'].lower()
+            if 'name' in recipe and recipe['name'] and name.lower() in recipe['name'].lower()
         ]
     
     return jsonify({
