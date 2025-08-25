@@ -48,6 +48,29 @@ Once the server is running, you can interact with it through HTTP requests. The 
 
 ### API Endpoints
 
+#### Get All Recipes
+- **URL**: `/get_recipes`
+- **Method**: `GET`
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "recipes": [
+             {
+            "author_note": "...",
+            "id": "10",
+            "ingredients": [
+                "Bobkový list",
+                "Drcený kmín"
+            ],
+            "name": "Roman Vaněk",
+            "steps": "..."
+        },
+        ]
+    }
+    ```
+
 #### Add Ingredient to Shopping List
 - **URL**: `/add_ingredient`
 - **Method**: `POST`
@@ -106,28 +129,7 @@ Once the server is running, you can interact with it through HTTP requests. The 
     }
     ```
 
-#### Get All Recipes
-- **URL**: `/get_recipes`
-- **Method**: `GET`
-- **Success Response**:
-  - **Code**: 200
-  - **Content**:
-    ```json
-    {
-        "recipes": [
-             {
-            "author_note": "...",
-            "id": "10",
-            "ingredients": [
-                "Bobkový list",
-                "Drcený kmín"
-            ],
-            "name": "Roman Vaněk",
-            "steps": "..."
-        },
-        ]
-    }
-    ```
+
 
 ### Example Usage with cURL
 
