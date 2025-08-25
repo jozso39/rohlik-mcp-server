@@ -48,5 +48,32 @@ def clear_shopping_list():
 def get_recipes_route():
     return jsonify({"recipes": recipes}), 200
 
+@app.route('/search_recipes', methods=['GET'])
+def search_recipes():
+    tag = request.args.get('tag')
+    name = request.args.get('name')
+    
+    if not tag and not name:
+        return jsonify({"error": "Please provide either 'tag' or 'name' parameter"}), 400
+    
+    filtered_recipes = recipes.copy()
+    
+    if tag:
+        filtered_recipes = [
+            recipe for recipe in filtered_recipes 
+            if tag.lower() in [t.lower() for t in recipe['tags']]
+        ]
+    
+    if name:
+        filtered_recipes = [
+            recipe for recipe in filtered_recipes 
+            if name.lower() in recipe['name'].lower()
+        ]
+    
+    return jsonify({
+        "count": len(filtered_recipes),
+        "recipes": filtered_recipes
+    }), 200
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

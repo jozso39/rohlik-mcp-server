@@ -12,9 +12,15 @@ def load_recipes(csv_path):
         with open(full_path, 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                # Convert ingredients string to list
-                if 'ingredients' in row:
+                # Convert ingredients string to list if it exists and is not None
+                if 'ingredients' in row and row['ingredients']:
                     row['ingredients'] = [i.strip() for i in row['ingredients'].split(',')]
+                # Convert tags string to list if it exists and is not None
+                if 'tags' in row and row['tags']:
+                    row['tags'] = [t.strip() for t in row['tags'].split(',')]
+                # Ensure tags exist even if empty
+                if 'tags' not in row or not row['tags']:
+                    row['tags'] = []
                 recipes.append(row)
         return recipes
     except Exception as e:

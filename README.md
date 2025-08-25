@@ -57,17 +57,49 @@ Once the server is running, you can interact with it through HTTP requests. The 
     ```json
     {
         "recipes": [
-             {
-            "author_note": "...",
+            {
             "id": "10",
             "ingredients": [
                 "Bobkový list",
                 "Drcený kmín"
             ],
-            "name": "Roman Vaněk",
-            "steps": "..."
-        },
+            "name": "Hovězí guláš s karlovarským knedlíkem",
+            "steps": "...",
+            "tags": "masité, omáčka, hlavní chod"
+        }
         ]
+    }
+    ```
+
+#### Search Recipes
+- **URL**: `/search_recipes`
+- **Method**: `GET`
+- **Query Parameters**:
+  - `tag` (optional): Search recipes by tag (e.g., "vegetarian", "polévka", "masité")
+  - `name` (optional): Search recipes by name
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "count": 1,
+        "recipes": [
+            {
+                "id": "12",
+                "ingredients": ["Cibule", "Cukr krupice", "..."],
+                "name": "Hrášková krémová polévka",
+                "steps": "...",
+                "tags": "polévka, vegetarian"
+            }
+        ]
+    }
+    ```
+- **Error Response**:
+  - **Code**: 400
+  - **Content**:
+    ```json
+    {
+        "error": "Please provide either 'tag' or 'name' parameter"
     }
     ```
 
@@ -161,6 +193,21 @@ curl -X POST http://localhost:5000/clear_shopping_list
 4. Get all recipes:
 ```bash
 curl http://localhost:5000/get_recipes
+```
+
+5. Search recipes by tag:
+```bash
+curl "http://localhost:5000/search_recipes?tag=polévka"
+```
+
+6. Search recipes by name:
+```bash
+curl "http://localhost:5000/search_recipes?name=guláš"
+```
+
+7. Search with both parameters:
+```bash
+curl "http://localhost:5000/search_recipes?tag=masité&name=kuře"
 ```
 
 ## TODO: Future Enhancements
