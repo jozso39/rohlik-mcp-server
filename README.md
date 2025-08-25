@@ -115,7 +115,16 @@ Once the server is running, you can interact with it through HTTP requests. The 
     ```json
     {
         "recipes": [
-            // Array of recipe objects from the Recipes.csv file
+             {
+            "author_note": "...",
+            "id": "10",
+            "ingredients": [
+                "Bobkový list",
+                "Drcený kmín"
+            ],
+            "name": "Roman Vaněk",
+            "steps": "..."
+        },
         ]
     }
     ```
@@ -144,7 +153,10 @@ curl -X POST http://localhost:5000/clear_shopping_list
 curl http://localhost:5000/get_recipes
 ```
 
-## Future Enhancements
+## TODO: Future Enhancements
 
-- Consider integrating a more robust database solution (e.g., SQLite or PostgreSQL) for better data management as the project scales.
-- Implement additional features such as user authentication, recipe search, and meal planning capabilities.
+- integrating a more robust database solution (e.g., SQLite or PostgreSQL) for better data management as the project scales.
+- user authentication
+- recipe search
+- meal planning
+- recipe tags, like vegan, keto...
