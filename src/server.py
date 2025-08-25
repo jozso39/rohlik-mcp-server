@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from shopping_list_manager import ShoppingListManager
 from recipe_loader import load_recipes
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Initialize the shopping list manager and load recipes
 shopping_list_manager = ShoppingListManager()
