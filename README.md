@@ -42,6 +42,12 @@ shopping-list-mcp-server
    python src/server.py
    ```
 
+4. **Run tests:**
+   Execute the test suite by running:
+   ```
+   python -m unittest tests/test_api.py
+   ```
+
 ## Usage
 
 Once the server is running, you can interact with it through HTTP requests. The server provides the following endpoints to manage the shopping list and recipes:
