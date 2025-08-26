@@ -228,6 +228,3 @@ curl "http://localhost:8001/search_recipes?diet=vegetarian&meal_type=desert&name
 
 - integrating a more robust database solution (e.g., SQLite or PostgreSQL) for better data management as the project scales.
 - user authentication
-- recipe search
-- meal planning
-- recipe tags, like vegan, keto...
