@@ -181,39 +181,39 @@ Once the server is running, you can interact with it through HTTP requests. The 
 
 1. Add multiple ingredients:
 ```bash
-curl -X POST http://localhost:5000/add_ingredients \
+curl -X POST http://localhost:8001/add_ingredients \
   -H "Content-Type: application/json" \
   -d '{"ingredients": ["Mléko", "Cibule", "Chléb"]}'
 ```
 
 2. Get the shopping list:
 ```bash
-curl http://localhost:5000/get_shopping_list
+curl http://localhost:8001/get_shopping_list
 ```
 
 3. Clear the shopping list:
 ```bash
-curl -X POST http://localhost:5000/clear_shopping_list
+curl -X POST http://localhost:8001/clear_shopping_list
 ```
 
 4. Get all recipes:
 ```bash
-curl http://localhost:5000/get_recipes
+curl http://localhost:8001/get_recipes
 ```
 
 5. Search recipes by tag:
 ```bash
-curl "http://localhost:5000/search_recipes?tag=polévka"
+curl "http://localhost:8001/search_recipes?tag=polévka"
 ```
 
 6. Search recipes by name:
 ```bash
-curl "http://localhost:5000/search_recipes?name=guláš"
+curl "http://localhost:8001/search_recipes?name=guláš"
 ```
 
 7. Search with both parameters:
 ```bash
-curl "http://localhost:5000/search_recipes?tag=masité&name=kuře"
+curl "http://localhost:8001/search_recipes?tag=masité&name=kuře"
 ```
 
 ## TODO: Future Enhancements
