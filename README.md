@@ -71,7 +71,8 @@ Once the server is running, you can interact with it through HTTP requests. The 
             ],
             "name": "Hovězí guláš s karlovarským knedlíkem",
             "steps": "...",
-            "tags": "masité, omáčka, hlavní chod"
+            "diet": ["masité", "high-protein"],
+            "meal_type": ["hlavní chod"]
         }
         ]
     }
@@ -81,7 +82,8 @@ Once the server is running, you can interact with it through HTTP requests. The 
 - **URL**: `/search_recipes`
 - **Method**: `GET`
 - **Query Parameters**:
-  - `tag` (optional): Search recipes by tag (e.g., "vegetarian", "polévka", "masité")
+  - `diet` (optional): Search recipes by diet category (e.g., "vegetarian", "vegan", "high-protein")
+  - `meal_type` (optional): Search recipes by meal type (e.g., "polévka", "hlavní chod", "desert")
   - `name` (optional): Search recipes by name
 - **Success Response**:
   - **Code**: 200
@@ -95,7 +97,8 @@ Once the server is running, you can interact with it through HTTP requests. The 
                 "ingredients": ["Cibule", "Cukr krupice", "..."],
                 "name": "Hrášková krémová polévka",
                 "steps": "...",
-                "tags": "polévka, vegetarian"
+                "diet": ["vegetarian"],
+                "meal_type": ["polévka"]
             }
         ]
     }
@@ -105,7 +108,7 @@ Once the server is running, you can interact with it through HTTP requests. The 
   - **Content**:
     ```json
     {
-        "error": "Please provide either 'tag' or 'name' parameter"
+        "error": "Please provide at least one search parameter: 'diet', 'meal_type', or 'name'"
     }
     ```
 
@@ -201,19 +204,24 @@ curl -X POST http://localhost:8001/clear_shopping_list
 curl http://localhost:8001/get_recipes
 ```
 
-5. Search recipes by tag:
+5. Search recipes by diet:
 ```bash
-curl "http://localhost:8001/search_recipes?tag=polévka"
+curl "http://localhost:8001/search_recipes?diet=vegetarian"
 ```
 
-6. Search recipes by name:
+6. Search recipes by meal type:
+```bash
+curl "http://localhost:8001/search_recipes?meal_type=polévka"
+```
+
+7. Search recipes by name:
 ```bash
 curl "http://localhost:8001/search_recipes?name=guláš"
 ```
 
-7. Search with both parameters:
+8. Search with multiple parameters:
 ```bash
-curl "http://localhost:8001/search_recipes?tag=masité&name=kuře"
+curl "http://localhost:8001/search_recipes?diet=vegetarian&meal_type=desert&name=buchta"
 ```
 
 ## TODO: Future Enhancements

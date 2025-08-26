@@ -15,12 +15,18 @@ def load_recipes(csv_path):
                 # Convert ingredients string to list if it exists and is not None
                 if 'ingredients' in row and row['ingredients']:
                     row['ingredients'] = [i.strip() for i in row['ingredients'].split(',')]
-                # Convert tags string to list if it exists and is not None
-                if 'tags' in row and row['tags']:
-                    row['tags'] = [t.strip() for t in row['tags'].split(',')]
-                # Ensure tags exist even if empty
-                if 'tags' not in row or not row['tags']:
-                    row['tags'] = []
+                # Convert diet and meal_type to lists if they exist and are not None
+                if 'diet' in row and row['diet']:
+                    row['diet'] = [t.strip() for t in row['diet'].split(',')]
+                # Ensure diet exists even if empty
+                if 'diet' not in row or not row['diet']:
+                    row['diet'] = []
+                    
+                if 'meal_type' in row and row['meal_type']:
+                    row['meal_type'] = [t.strip() for t in row['meal_type'].split(',')]
+                # Ensure meal_type exists even if empty
+                if 'meal_type' not in row or not row['meal_type']:
+                    row['meal_type'] = []
                 recipes.append(row)
         return recipes
     except Exception as e:

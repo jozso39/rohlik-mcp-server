@@ -79,17 +79,43 @@ class TestMCPServer(unittest.TestCase):
         response = requests.get(f"{self.base_url}/get_shopping_list")
         self.assertEqual(response.json()["shopping_list"], [])
 
-    def test_search_recipes_by_tag(self):
-        """Test searching recipes by tag"""
-        response = requests.get(f"{self.base_url}/search_recipes", params={"tag": "polévka"})
+    def test_search_recipes_by_diet(self):
+        """Test searching recipes by diet"""
+        response = requests.get(f"{self.base_url}/search_recipes", params={"diet": "vegetarian"})
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn("count", data)
         self.assertIn("recipes", data)
-        # Verify all returned recipes have the polévka tag
+        # Verify all returned recipes have the vegetarian diet
         for recipe in data["recipes"]:
-            self.assertTrue(any(tag.lower() == "polévka" for tag in recipe["tags"]))
+            self.assertTrue(any(d.lower() == "vegetarian" for d in recipe["diet"]))
+
+    def test_search_recipes_by_meal_type(self):
+        """Test searching recipes by meal type"""
+        response = requests.get(f"{self.base_url}/search_recipes", params={"meal_type": "polévka"})
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("count", data)
+        self.assertIn("recipes", data)
+        # Verify all returned recipes have the polévka meal type
+        for recipe in data["recipes"]:
+            self.assertTrue(any(m.lower() == "polévka" for m in recipe["meal_type"]))
+
+    def test_search_recipes_by_diet_and_meal_type(self):
+        """Test searching recipes by both diet and meal type"""
+        response = requests.get(f"{self.base_url}/search_recipes", 
+                              params={"diet": "vegetarian", "meal_type": "desert"})
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("count", data)
+        self.assertIn("recipes", data)
+        # Verify all returned recipes have both vegetarian diet and desert meal type
+        for recipe in data["recipes"]:
+            self.assertTrue(any(d.lower() == "vegetarian" for d in recipe["diet"]))
+            self.assertTrue(any(m.lower() == "desert" for m in recipe["meal_type"]))
 
     def test_search_recipes_by_name(self):
         """Test searching recipes by name"""
@@ -109,7 +135,10 @@ class TestMCPServer(unittest.TestCase):
         response = requests.get(f"{self.base_url}/search_recipes")
         
         self.assertEqual(response.status_code, 400)
-        self.assertIn("error", response.json())
+        data = response.json()
+        self.assertIn("error", data)
+        self.assertEqual(data["error"], 
+                       "Please provide at least one search parameter: 'diet', 'meal_type', or 'name'")
 
 if __name__ == '__main__':
     unittest.main()

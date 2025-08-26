@@ -52,18 +52,25 @@ def get_recipes_route():
 
 @app.route('/search_recipes', methods=['GET'])
 def search_recipes():
-    tag = request.args.get('tag')
+    diet = request.args.get('diet')
+    meal_type = request.args.get('meal_type')
     name = request.args.get('name')
     
-    if not tag and not name:
-        return jsonify({"error": "Please provide either 'tag' or 'name' parameter"}), 400
+    if not any([diet, meal_type, name]):
+        return jsonify({"error": "Please provide at least one search parameter: 'diet', 'meal_type', or 'name'"}), 400
     
     filtered_recipes = recipes.copy()
     
-    if tag:
+    if diet:
         filtered_recipes = [
             recipe for recipe in filtered_recipes 
-            if tag.lower() in [t.lower() for t in recipe['tags']]
+            if recipe.get('diet') and any(d.lower() == diet.lower() for d in recipe['diet'])
+        ]
+    
+    if meal_type:
+        filtered_recipes = [
+            recipe for recipe in filtered_recipes 
+            if recipe.get('meal_type') and any(m.lower() == meal_type.lower() for m in recipe['meal_type'])
         ]
     
     if name:
