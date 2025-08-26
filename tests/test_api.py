@@ -12,7 +12,7 @@ class TestMCPServer(unittest.TestCase):
         server_path = Path(__file__).parent.parent / 'src' / 'server.py'
         cls.server_process = subprocess.Popen([sys.executable, str(server_path)])
         # Wait for server to start
-        time.sleep(5)
+        time.sleep(2)
         cls.base_url = 'http://localhost:8001'
 
     @classmethod
