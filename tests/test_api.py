@@ -106,7 +106,7 @@ class TestMCPServer(unittest.TestCase):
     def test_search_recipes_by_diet_and_meal_type(self):
         """Test searching recipes by both diet and meal type"""
         response = requests.get(f"{self.base_url}/search_recipes", 
-                              params={"diet": "vegetarian", "meal_type": "desert"})
+        params={"diet": "vegetarian", "meal_type": "desert"})
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
@@ -138,7 +138,7 @@ class TestMCPServer(unittest.TestCase):
         data = response.json()
         self.assertIn("error", data)
         self.assertEqual(data["error"], 
-                       "Please provide at least one search parameter: 'diet', 'meal_type', or 'name'")
+        "Please provide at least one search parameter: 'diet', 'meal_type', or 'name'")
 
 if __name__ == '__main__':
     unittest.main()
