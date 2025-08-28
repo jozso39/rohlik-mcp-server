@@ -2,7 +2,7 @@
 
 This project implements a simple MCP server that serves as a database for managing shopping lists based on recipes. The server is built using Flask and interacts with a dataset of recipes stored in a CSV file.
 It was created to serve a [Rohlík AI ReAct Agent](https://github.com/jozso39/rohlik-agent-js). Both of the projects have to be used simultaniously.
-Both of the projects are created as an interview assignmnent to [Rohlík](https://www.rohlik.cz/) company.
+Both of the projects are created as an interview assignmnent to [Rohlík](https://www.rohlik.cz/) company. There is no intention to deploy this code or use it in production.
 
 # Instalation
 ```
