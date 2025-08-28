@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 # Usage
 ```
-python src/server.py
+python shopping_list_mcp_server/server.py
 ```
 
 ## Tests

@@ -9,7 +9,7 @@ class TestMCPServer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Start the Flask server
-        server_path = Path(__file__).parent.parent / 'src' / 'server.py'
+        server_path = Path(__file__).parent.parent / 'shopping_list_mcp_server' / 'server.py'
         cls.server_process = subprocess.Popen([sys.executable, str(server_path)])
         # Wait for server to start
         time.sleep(2)
