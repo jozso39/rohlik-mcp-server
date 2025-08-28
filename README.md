@@ -1,84 +1,41 @@
 # Shopping List MCP Server
 
-This project implements a simple MCP (Meal Planning) server that serves as a database for managing shopping lists based on recipes. The server is built using Flask and interacts with a dataset of recipes stored in a CSV file.
+This project implements a simple MCP server that serves as a database for managing shopping lists based on recipes. The server is built using Flask and interacts with a dataset of recipes stored in a CSV file.
+It was created to serve a [Rohlík AI ReAct Agent](https://github.com/jozso39/rohlik-agent-js). Both of the projects have to be used simultaniously.
+Both of the projects are created as an interview assignmnent to [Rohlík](https://www.rohlik.cz/) company.
 
-## Project Structure
-
+# Instalation
 ```
-shopping-list-mcp-server
-├── src
-│   ├── server.py               # Main entry point for the MCP server
-│   ├── shopping_list_manager.py # Logic for managing the shopping list
-│   ├── recipe_loader.py         # Loads recipes from the CSV file
-│   └── utils.py                 # Utility functions for the project
-├── data
-│   └── Recipes.csv              # Dataset of recipes
-├── requirements.txt             # Project dependencies
-└── README.md                    # Project documentation
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-## Setup Instructions
+# Usage
+```
+python src/server.py
+```
 
-1. **Clone the repository:**
-   ```
-   git clone <repository-url>
-   cd shopping-list-mcp-server
-   ```
+## Tests
+```
+python -m unittest tests/test_api.py
+```
 
-2. **Install dependencies:**
-   It is recommended to use a virtual environment. You can create one using:
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-   Then install the required packages:
-   ```
-   pip install -r requirements.txt
-   ```
+## Endpoints
 
-3. **Run the server:**
-   Start the MCP server by running:
-   ```
-   python src/server.py
-   ```
-
-4. **Run tests:**
-   Execute the test suite by running:
-   ```
-   python -m unittest tests/test_api.py
-   ```
-
-## Usage
-
-Once the server is running, you can interact with it through HTTP requests. The server provides the following endpoints to manage the shopping list and recipes:
-
-### API Endpoints
-
-#### Get All Recipes
-- **URL**: `/get_recipes`
+### Get Shopping List
+- **URL**: `/get_shopping_list`
 - **Method**: `GET`
 - **Success Response**:
   - **Code**: 200
   - **Content**:
     ```json
     {
-        "recipes": [
-            {
-            "id": "10",
-            "ingredients": [
-                "Bobkový list",
-                "Drcený kmín"
-            ],
-            "name": "Hovězí guláš s karlovarským knedlíkem",
-            "steps": "...",
-            "diet": ["masité", "high-protein"],
-            "meal_type": ["hlavní chod"]
-        }
-        ]
+        "shopping_list": ["Mléko", "Cibule", "Chléb"]
     }
     ```
 
-#### Search Recipes
+### Search Recipes
 - **URL**: `/search_recipes`
 - **Method**: `GET`
 - **Query Parameters**:
@@ -103,16 +60,32 @@ Once the server is running, you can interact with it through HTTP requests. The 
         ]
     }
     ```
-- **Error Response**:
-  - **Code**: 400
+
+### Get All Recipes
+- **URL**: `/get_recipes`
+- **Method**: `GET`
+- **Success Response**:
+  - **Code**: 200
   - **Content**:
     ```json
     {
-        "error": "Please provide at least one search parameter: 'diet', 'meal_type', or 'name'"
+        "recipes": [
+            {
+            "id": "10",
+            "ingredients": [
+                "Bobkový list",
+                "Drcený kmín"
+            ],
+            "name": "Hovězí guláš s karlovarským knedlíkem",
+            "steps": "...",
+            "diet": ["masité", "high-protein"],
+            "meal_type": ["hlavní chod"]
+        }
+        ]
     }
     ```
 
-#### Add Multiple Ingredients to Shopping List
+### Add Multiple Ingredients to Shopping List
 - **URL**: `/add_ingredients`
 - **Method**: `POST`
 - **Content-Type**: `application/json`
@@ -131,44 +104,8 @@ Once the server is running, you can interact with it through HTTP requests. The 
         "shopping_list": ["Mléko", "Cibule", "Chléb"]
     }
     ```
-- **Error Responses**:
-  - **Code**: 400
-  - **Content**:
-    ```json
-    {"error": "Request must be JSON"}
-    ```
-    or
-    ```json
-    {"error": "Invalid JSON"}
-    ```
-    or
-    ```json
-    {"error": "No ingredients provided"}
-    ```
-    or
-    ```json
-    {"error": "Ingredients must be an array"}
-    ```
-    or
-    ```json
-    {"error": "Ingredients array is empty"}
-    ```
 
-#### Get Shopping List
-- **URL**: `/get_shopping_list`
-- **Method**: `GET`
-- **Success Response**:
-  - **Code**: 200
-  - **Content**:
-    ```json
-    {
-        "shopping_list": ["Mléko", "Cibule", "Chléb"]
-    }
-    ```
-
-
-
-#### Remove Ingredients from Shopping List
+### Remove Ingredients from Shopping List
 - **URL**: `/remove_ingredients`
 - **Method**: `POST`
 - **Content-Type**: `application/json`
@@ -186,28 +123,6 @@ Once the server is running, you can interact with it through HTTP requests. The 
         "shopping_list": ["Mléko", "Chléb"]
     }
     ```
-- **Error Responses**:
-  - **Code**: 400
-  - **Content**:
-    ```json
-    {"error": "Request must be JSON"}
-    ```
-    or
-    ```json
-    {"error": "Invalid JSON"}
-    ```
-    or
-    ```json
-    {"error": "No ingredients provided"}
-    ```
-    or
-    ```json
-    {"error": "Ingredients must be an array"}
-    ```
-    or
-    ```json
-    {"error": "Ingredients array is empty"}
-    ```
 
 #### Clear Shopping List
 - **URL**: `/clear_shopping_list`
@@ -220,61 +135,6 @@ Once the server is running, you can interact with it through HTTP requests. The 
         "message": "Shopping list cleared"
     }
     ```
-
-
-
-### Example Usage with cURL
-
-1. Add multiple ingredients:
-```bash
-curl -X POST http://localhost:8001/add_ingredients \
-  -H "Content-Type: application/json" \
-  -d '{"ingredients": ["Mléko", "Cibule", "Chléb"]}'
-```
-
-2. Get the shopping list:
-```bash
-curl http://localhost:8001/get_shopping_list
-```
-
-
-
-3. Remove ingredients from the shopping list:
-```bash
-curl -X POST http://localhost:8001/remove_ingredients \
-  -H "Content-Type: application/json" \
-  -d '{"ingredients": ["Cibule", "Máslo", "Neexistuje"]}'
-```
-
-4. Clear the shopping list:
-```bash
-curl -X POST http://localhost:8001/clear_shopping_list
-```
-
-4. Get all recipes:
-```bash
-curl http://localhost:8001/get_recipes
-```
-
-5. Search recipes by diet:
-```bash
-curl "http://localhost:8001/search_recipes?diet=vegetarian"
-```
-
-6. Search recipes by meal type:
-```bash
-curl "http://localhost:8001/search_recipes?meal_type=polévka"
-```
-
-7. Search recipes by name:
-```bash
-curl "http://localhost:8001/search_recipes?name=guláš"
-```
-
-8. Search with multiple parameters:
-```bash
-curl "http://localhost:8001/search_recipes?diet=vegetarian&meal_type=desert&name=buchta"
-```
 
 ## TODO: Future Enhancements
 
