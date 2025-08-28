@@ -166,6 +166,49 @@ Once the server is running, you can interact with it through HTTP requests. The 
     }
     ```
 
+
+
+#### Remove Ingredients from Shopping List
+- **URL**: `/remove_ingredients`
+- **Method**: `POST`
+- **Content-Type**: `application/json`
+- **Request Body**:
+  ```json
+  {
+      "ingredients": ["Cibule", "Máslo", "Neexistuje"]
+  }
+  ```
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "shopping_list": ["Mléko", "Chléb"]
+    }
+    ```
+- **Error Responses**:
+  - **Code**: 400
+  - **Content**:
+    ```json
+    {"error": "Request must be JSON"}
+    ```
+    or
+    ```json
+    {"error": "Invalid JSON"}
+    ```
+    or
+    ```json
+    {"error": "No ingredients provided"}
+    ```
+    or
+    ```json
+    {"error": "Ingredients must be an array"}
+    ```
+    or
+    ```json
+    {"error": "Ingredients array is empty"}
+    ```
+
 #### Clear Shopping List
 - **URL**: `/clear_shopping_list`
 - **Method**: `POST`
@@ -194,7 +237,16 @@ curl -X POST http://localhost:8001/add_ingredients \
 curl http://localhost:8001/get_shopping_list
 ```
 
-3. Clear the shopping list:
+
+
+3. Remove ingredients from the shopping list:
+```bash
+curl -X POST http://localhost:8001/remove_ingredients \
+  -H "Content-Type: application/json" \
+  -d '{"ingredients": ["Cibule", "Máslo", "Neexistuje"]}'
+```
+
+4. Clear the shopping list:
 ```bash
 curl -X POST http://localhost:8001/clear_shopping_list
 ```

@@ -16,3 +16,13 @@ class ShoppingListManager:
     def clear_list(self):
         """Clear the shopping list."""
         self.shopping_list = []
+
+    def remove_ingredients(self, ingredients):
+        """Remove specified ingredients from the shopping list. Ignore any not present."""
+        if not isinstance(ingredients, list):
+            return False
+        # Remove each ingredient if present
+        for ingredient in ingredients:
+            if ingredient in self.shopping_list:
+                self.shopping_list = [item for item in self.shopping_list if item != ingredient]
+        return True

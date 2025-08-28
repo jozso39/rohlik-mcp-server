@@ -142,3 +142,19 @@ class TestMCPServer(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+    def test_remove_ingredients(self):
+        """Test removing ingredients from shopping list"""
+        # Add ingredients first
+        ingredients = ["Mléko", "Cibule", "Chléb", "Máslo"]
+        requests.post(f"{self.base_url}/add_ingredients", json={"ingredients": ingredients})
+
+        # Remove some ingredients, including one not present
+        to_remove = ["Cibule", "Máslo", "Neexistuje"]
+        response = requests.post(f"{self.base_url}/remove_ingredients", json={"ingredients": to_remove})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("shopping_list", data)
+        # Only "Mléko" and "Chléb" should remain
+        self.assertEqual(set(data["shopping_list"]), set(["Mléko", "Chléb"]))

@@ -10,6 +10,14 @@ CORS(app)  # Enable CORS for all routes
 shopping_list_manager = ShoppingListManager()
 recipes = load_recipes('data/Recipes.csv')
 
+@app.route('/get_shopping_list', methods=['GET'])
+def get_shopping_list():
+    return jsonify({"shopping_list": shopping_list_manager.get_list()}), 200
+
+@app.route('/get_recipes', methods=['GET'])
+def get_recipes_route():
+    return jsonify({"recipes": recipes}), 200
+
 @app.route('/add_ingredients', methods=['POST'])
 def add_ingredients():
     if not request.is_json:
@@ -36,19 +44,6 @@ def add_ingredients():
         "message": f"{len(ingredients)} ingredients added",
         "shopping_list": shopping_list_manager.get_list()
     }), 200
-
-@app.route('/get_shopping_list', methods=['GET'])
-def get_shopping_list():
-    return jsonify({"shopping_list": shopping_list_manager.get_list()}), 200
-
-@app.route('/clear_shopping_list', methods=['POST'])
-def clear_shopping_list():
-    shopping_list_manager.clear_list()
-    return jsonify({"message": "Shopping list cleared"}), 200
-
-@app.route('/get_recipes', methods=['GET'])
-def get_recipes_route():
-    return jsonify({"recipes": recipes}), 200
 
 @app.route('/search_recipes', methods=['GET'])
 def search_recipes():
@@ -82,6 +77,37 @@ def search_recipes():
     return jsonify({
         "count": len(filtered_recipes),
         "recipes": filtered_recipes
+    }), 200
+
+@app.route('/clear_shopping_list', methods=['POST'])
+def clear_shopping_list():
+    shopping_list_manager.clear_list()
+    return jsonify({"message": "Shopping list cleared"}), 200
+
+# New endpoint to remove ingredients from the shopping list
+@app.route('/remove_ingredients', methods=['POST'])
+def remove_ingredients():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    ingredients = data.get('ingredients')
+    if ingredients is None:
+        return jsonify({"error": "No ingredients provided"}), 400
+
+    if not isinstance(ingredients, list):
+        return jsonify({"error": "Ingredients must be an array"}), 400
+
+    if not ingredients:
+        return jsonify({"error": "Ingredients array is empty"}), 400
+
+    shopping_list_manager.remove_ingredients(ingredients)
+
+    return jsonify({
+        "shopping_list": shopping_list_manager.get_list()
     }), 200
 
 if __name__ == '__main__':
