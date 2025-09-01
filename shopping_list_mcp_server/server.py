@@ -36,6 +36,15 @@ def get_all_diets():
         "diets": sorted(all_diet_types)
     }), 200
 
+@app.route('/get_recipe_names', methods=['GET'])
+def get_recipe_names():
+    """Get all recipe names from all recipes."""
+    recipe_names = [recipe['name'] for recipe in recipes if recipe.get('name')]
+    return jsonify({
+        "count": len(recipe_names),
+        "recipe_names": sorted(recipe_names)
+    }), 200
+
 @app.route('/get_shopping_list', methods=['GET'])
 def get_shopping_list():
     return jsonify({"shopping_list": shopping_list_manager.get_list()}), 200

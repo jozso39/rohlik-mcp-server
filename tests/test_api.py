@@ -200,6 +200,19 @@ class TestMCPServer(unittest.TestCase):
         self.assertIsInstance(data["diets"], list)
         self.assertGreater(data["count"], 0)
 
+    def test_get_recipe_names(self):
+        """Test getting all recipe names"""
+        response = requests.get(f"{self.base_url}/get_recipe_names")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("count", data)
+        self.assertIn("recipe_names", data)
+        self.assertIsInstance(data["recipe_names"], list)
+        self.assertGreater(data["count"], 0)
+        # Verify names are sorted
+        self.assertEqual(data["recipe_names"], sorted(data["recipe_names"]))
+
     def test_remove_ingredients(self):
         """Test removing ingredients from shopping list"""
         # Add ingredients first
