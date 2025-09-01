@@ -14,12 +14,26 @@ for recipe in recipes:
     if recipe.get('ingredients'):
         all_ingredients.update(recipe['ingredients'])
 
+# Cache all unique diet types for fast lookup
+all_diet_types = set()
+for recipe in recipes:
+    if recipe.get('diet'):
+        all_diet_types.update(recipe['diet'])
+
 @app.route('/get_all_ingredients', methods=['GET'])
 def get_all_ingredients():
     """Get all unique ingredients from all recipes."""
     return jsonify({
         "count": len(all_ingredients),
         "ingredients": sorted(all_ingredients)
+    }), 200
+
+@app.route('/get_all_diets', methods=['GET'])
+def get_all_diets():
+    """Get all unique diet types from all recipes."""
+    return jsonify({
+        "count": len(all_diet_types),
+        "diets": sorted(all_diet_types)
     }), 200
 
 @app.route('/get_shopping_list', methods=['GET'])

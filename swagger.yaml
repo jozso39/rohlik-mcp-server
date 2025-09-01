@@ -93,6 +93,35 @@ paths:
                       "Cukr krupice",
                     ]
 
+  /get_all_diets:
+    get:
+      summary: Get all diet types
+      description: Returns a list of all unique diet types from all recipes
+      responses:
+        "200":
+          description: A list of all unique diet types
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of unique diet types
+                    example: 8
+                  diets:
+                    type: array
+                    items:
+                      type: string
+                    description: Sorted list of all unique diet types
+                    example: [
+                      "bezlepkové",
+                      "high-protein",
+                      "low-carb",
+                      "masité",
+                      "tučné",
+                    ]
+
   /search_recipes:
     get:
       summary: Search recipes

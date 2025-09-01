@@ -99,6 +99,20 @@ python -m unittest tests/test_api.py
     }
     ```
 
+### Get All Diets
+- **URL**: `/get_all_diets`
+- **Method**: `GET`
+- **Description**: Get all unique diet types from all recipes
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "count": 8,
+        "diets": ["bezlepkové", "high-protein", "low-carb", "masité", "tučné", "vegan", "vegetarian", "bez laktozy"]
+    }
+    ```
+
 ### Add Multiple Ingredients to Shopping List
 - **URL**: `/add_ingredients`
 - **Method**: `POST`
