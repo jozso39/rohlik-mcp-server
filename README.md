@@ -42,6 +42,8 @@ python -m unittest tests/test_api.py
   - `diet` (optional): Search recipes by diet category (e.g., "vegetarian", "vegan", "high-protein")
   - `meal_type` (optional): Search recipes by meal type (e.g., "polévka", "hlavní chod", "desert")
   - `name` (optional): Search recipes by name
+  - `includes_ingredients` (optional): Comma-separated list of ingredients that must be present in the recipe (e.g., "Cibule,Máslo")
+  - `excludes_ingredients` (optional): Comma-separated list of ingredients that must NOT be present in the recipe (e.g., "Mléko,Vejce")
 - **Success Response**:
   - **Code**: 200
   - **Content**:

@@ -76,9 +76,11 @@ def search_recipes():
     diet = request.args.get('diet')
     meal_type = request.args.get('meal_type')
     name = request.args.get('name')
+    includes_ingredients = request.args.get('includes_ingredients')
+    excludes_ingredients = request.args.get('excludes_ingredients')
     
-    if not any([diet, meal_type, name]):
-        return jsonify({"error": "Please provide at least one search parameter: 'diet', 'meal_type', or 'name'"}), 400
+    if not any([diet, meal_type, name, includes_ingredients, excludes_ingredients]):
+        return jsonify({"error": "Please provide at least one search parameter: 'diet', 'meal_type', 'name', 'includes_ingredients', or 'excludes_ingredients'"}), 400
     
     filtered_recipes = recipes.copy()
     
@@ -98,6 +100,28 @@ def search_recipes():
         filtered_recipes = [
             recipe for recipe in filtered_recipes 
             if 'name' in recipe and recipe['name'] and name.lower() in recipe['name'].lower()
+        ]
+    
+    if includes_ingredients:
+        # Parse comma-separated ingredients and normalize case
+        required_ingredients = [ing.strip().lower() for ing in includes_ingredients.split(',') if ing.strip()]
+        filtered_recipes = [
+            recipe for recipe in filtered_recipes
+            if recipe.get('ingredients') and all(
+                any(req_ing in recipe_ing.lower() for recipe_ing in recipe['ingredients'])
+                for req_ing in required_ingredients
+            )
+        ]
+    
+    if excludes_ingredients:
+        # Parse comma-separated ingredients and normalize case
+        excluded_ingredients = [ing.strip().lower() for ing in excludes_ingredients.split(',') if ing.strip()]
+        filtered_recipes = [
+            recipe for recipe in filtered_recipes
+            if recipe.get('ingredients') and not any(
+                any(excl_ing in recipe_ing.lower() for recipe_ing in recipe['ingredients'])
+                for excl_ing in excluded_ingredients
+            )
         ]
     
     return jsonify({

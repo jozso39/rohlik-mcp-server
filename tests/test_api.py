@@ -138,11 +138,67 @@ class TestMCPServer(unittest.TestCase):
         data = response.json()
         self.assertIn("error", data)
         self.assertEqual(data["error"], 
-        "Please provide at least one search parameter: 'diet', 'meal_type', or 'name'")
+        "Please provide at least one search parameter: 'diet', 'meal_type', 'name', 'includes_ingredients', or 'excludes_ingredients'")
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_search_recipes_includes_ingredients(self):
+        """Test searching recipes by included ingredients"""
+        response = requests.get(f"{self.base_url}/search_recipes", params={"includes_ingredients": "Cibule"})
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("count", data)
+        self.assertIn("recipes", data)
+        # Verify all returned recipes contain onion
+        for recipe in data["recipes"]:
+            self.assertTrue(any("cibule" in ingredient.lower() for ingredient in recipe["ingredients"]))
 
+    def test_search_recipes_excludes_ingredients(self):
+        """Test searching recipes by excluded ingredients"""
+        response = requests.get(f"{self.base_url}/search_recipes", params={"excludes_ingredients": "Mléko"})
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("count", data)
+        self.assertIn("recipes", data)
+        # Verify all returned recipes do NOT contain milk
+        for recipe in data["recipes"]:
+            self.assertFalse(any("mléko" in ingredient.lower() for ingredient in recipe["ingredients"]))
+
+    def test_search_recipes_multiple_includes(self):
+        """Test searching recipes with multiple included ingredients"""
+        response = requests.get(f"{self.base_url}/search_recipes", params={"includes_ingredients": "Brambory,Cibule"})
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("count", data)
+        self.assertIn("recipes", data)
+        # Verify all returned recipes contain both potatoes and onions
+        for recipe in data["recipes"]:
+            has_potatoes = any("brambory" in ingredient.lower() for ingredient in recipe["ingredients"])
+            has_onions = any("cibule" in ingredient.lower() for ingredient in recipe["ingredients"])
+            self.assertTrue(has_potatoes and has_onions)
+
+    def test_get_all_ingredients(self):
+        """Test getting all ingredients"""
+        response = requests.get(f"{self.base_url}/get_all_ingredients")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("count", data)
+        self.assertIn("ingredients", data)
+        self.assertIsInstance(data["ingredients"], list)
+        self.assertGreater(data["count"], 0)
+
+    def test_get_all_diets(self):
+        """Test getting all diet types"""
+        response = requests.get(f"{self.base_url}/get_all_diets")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("count", data)
+        self.assertIn("diets", data)
+        self.assertIsInstance(data["diets"], list)
+        self.assertGreater(data["count"], 0)
 
     def test_remove_ingredients(self):
         """Test removing ingredients from shopping list"""
@@ -158,3 +214,6 @@ if __name__ == '__main__':
         self.assertIn("shopping_list", data)
         # Only "Mléko" and "Chléb" should remain
         self.assertEqual(set(data["shopping_list"]), set(["Mléko", "Chléb"]))
+
+if __name__ == '__main__':
+    unittest.main()
