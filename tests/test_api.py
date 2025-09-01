@@ -85,8 +85,8 @@ class TestMCPServer(unittest.TestCase):
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertIn("count", data)
         self.assertIn("recipes", data)
+        self.assertIn("pagination", data)
         # Verify all returned recipes have the vegetarian diet
         for recipe in data["recipes"]:
             self.assertTrue(any(d.lower() == "vegetarian" for d in recipe["diet"]))
@@ -97,8 +97,8 @@ class TestMCPServer(unittest.TestCase):
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertIn("count", data)
         self.assertIn("recipes", data)
+        self.assertIn("pagination", data)
         # Verify all returned recipes have the polévka meal type
         for recipe in data["recipes"]:
             self.assertTrue(any(m.lower() == "polévka" for m in recipe["meal_type"]))
@@ -110,8 +110,8 @@ class TestMCPServer(unittest.TestCase):
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertIn("count", data)
         self.assertIn("recipes", data)
+        self.assertIn("pagination", data)
         # Verify all returned recipes have both vegetarian diet and desert meal type
         for recipe in data["recipes"]:
             self.assertTrue(any(d.lower() == "vegetarian" for d in recipe["diet"]))
@@ -124,8 +124,8 @@ class TestMCPServer(unittest.TestCase):
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertIn("count", data)
         self.assertIn("recipes", data)
+        self.assertIn("pagination", data)
         # Verify all returned recipes have guláš in their name
         for recipe in data["recipes"]:
             self.assertIn(search_term.lower(), recipe["name"].lower())
@@ -146,8 +146,8 @@ class TestMCPServer(unittest.TestCase):
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertIn("count", data)
         self.assertIn("recipes", data)
+        self.assertIn("pagination", data)
         # Verify all returned recipes contain onion
         for recipe in data["recipes"]:
             self.assertTrue(any("cibule" in ingredient.lower() for ingredient in recipe["ingredients"]))
@@ -158,8 +158,8 @@ class TestMCPServer(unittest.TestCase):
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertIn("count", data)
         self.assertIn("recipes", data)
+        self.assertIn("pagination", data)
         # Verify all returned recipes do NOT contain milk
         for recipe in data["recipes"]:
             self.assertFalse(any("mléko" in ingredient.lower() for ingredient in recipe["ingredients"]))
@@ -170,8 +170,8 @@ class TestMCPServer(unittest.TestCase):
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertIn("count", data)
         self.assertIn("recipes", data)
+        self.assertIn("pagination", data)
         # Verify all returned recipes contain both potatoes and onions
         for recipe in data["recipes"]:
             has_potatoes = any("brambory" in ingredient.lower() for ingredient in recipe["ingredients"])
@@ -214,6 +214,32 @@ class TestMCPServer(unittest.TestCase):
         self.assertIn("shopping_list", data)
         # Only "Mléko" and "Chléb" should remain
         self.assertEqual(set(data["shopping_list"]), set(["Mléko", "Chléb"]))
+
+    def test_pagination_get_recipes(self):
+        """Test pagination on get_recipes endpoint"""
+        # Test first page
+        response = requests.get(f"{self.base_url}/get_recipes", params={"page": 1})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("recipes", data)
+        self.assertIn("pagination", data)
+        self.assertEqual(data["pagination"]["page"], 1)
+        self.assertEqual(data["pagination"]["per_page"], 10)
+        self.assertEqual(len(data["recipes"]), 10)
+        self.assertTrue(data["pagination"]["has_next"])
+        self.assertFalse(data["pagination"]["has_prev"])
+
+    def test_pagination_search_recipes(self):
+        """Test pagination on search_recipes endpoint"""
+        # Test pagination with vegetarian filter
+        response = requests.get(f"{self.base_url}/search_recipes", params={"diet": "vegetarian", "page": 1})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("recipes", data)
+        self.assertIn("pagination", data)
+        self.assertEqual(data["pagination"]["page"], 1)
+        self.assertEqual(data["pagination"]["per_page"], 10)
+        self.assertLessEqual(len(data["recipes"]), 10)
 
 if __name__ == '__main__':
     unittest.main()

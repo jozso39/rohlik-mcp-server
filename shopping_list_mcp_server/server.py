@@ -42,7 +42,34 @@ def get_shopping_list():
 
 @app.route('/get_recipes', methods=['GET'])
 def get_recipes_route():
-    return jsonify({"recipes": recipes}), 200
+    # Get pagination parameters
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # Fixed limit of 10 recipes per page
+    
+    # Calculate pagination
+    total_recipes = len(recipes)
+    start_index = (page - 1) * per_page
+    end_index = start_index + per_page
+    
+    # Get paginated recipes
+    paginated_recipes = recipes[start_index:end_index]
+    
+    # Calculate pagination info
+    total_pages = (total_recipes + per_page - 1) // per_page  # Ceiling division
+    has_next = page < total_pages
+    has_prev = page > 1
+    
+    return jsonify({
+        "recipes": paginated_recipes,
+        "pagination": {
+            "page": page,
+            "per_page": per_page,
+            "total": total_recipes,
+            "total_pages": total_pages,
+            "has_next": has_next,
+            "has_prev": has_prev
+        }
+    }), 200
 
 @app.route('/add_ingredients', methods=['POST'])
 def add_ingredients():
@@ -78,6 +105,10 @@ def search_recipes():
     name = request.args.get('name')
     includes_ingredients = request.args.get('includes_ingredients')
     excludes_ingredients = request.args.get('excludes_ingredients')
+    
+    # Get pagination parameters
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # Fixed limit of 10 recipes per page
     
     if not any([diet, meal_type, name, includes_ingredients, excludes_ingredients]):
         return jsonify({"error": "Please provide at least one search parameter: 'diet', 'meal_type', 'name', 'includes_ingredients', or 'excludes_ingredients'"}), 400
@@ -124,9 +155,27 @@ def search_recipes():
             )
         ]
     
+    # Apply pagination to filtered results
+    total_filtered = len(filtered_recipes)
+    start_index = (page - 1) * per_page
+    end_index = start_index + per_page
+    paginated_recipes = filtered_recipes[start_index:end_index]
+    
+    # Calculate pagination info
+    total_pages = (total_filtered + per_page - 1) // per_page  # Ceiling division
+    has_next = page < total_pages
+    has_prev = page > 1
+    
     return jsonify({
-        "count": len(filtered_recipes),
-        "recipes": filtered_recipes
+        "recipes": paginated_recipes,
+        "pagination": {
+            "page": page,
+            "per_page": per_page,
+            "total": total_filtered,
+            "total_pages": total_pages,
+            "has_next": has_next,
+            "has_prev": has_prev
+        }
     }), 200
 
 @app.route('/clear_shopping_list', methods=['POST'])

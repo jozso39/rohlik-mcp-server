@@ -44,12 +44,13 @@ python -m unittest tests/test_api.py
   - `name` (optional): Search recipes by name
   - `includes_ingredients` (optional): Comma-separated list of ingredients that must be present in the recipe (e.g., "Cibule,Máslo")
   - `excludes_ingredients` (optional): Comma-separated list of ingredients that must NOT be present in the recipe (e.g., "Mléko,Vejce")
+  - `page` (optional): Page number for pagination (default: 1)
+- **Note**: Results are limited to 10 recipes per page
 - **Success Response**:
   - **Code**: 200
   - **Content**:
     ```json
     {
-        "count": 1,
         "recipes": [
             {
                 "id": "12",
@@ -59,13 +60,24 @@ python -m unittest tests/test_api.py
                 "diet": ["vegetarian"],
                 "meal_type": ["polévka"]
             }
-        ]
+        ],
+        "pagination": {
+            "page": 1,
+            "per_page": 10,
+            "total": 25,
+            "total_pages": 3,
+            "has_next": true,
+            "has_prev": false
+        }
     }
     ```
 
 ### Get All Recipes
 - **URL**: `/get_recipes`
 - **Method**: `GET`
+- **Query Parameters**:
+  - `page` (optional): Page number for pagination (default: 1)
+- **Note**: Results are limited to 10 recipes per page
 - **Success Response**:
   - **Code**: 200
   - **Content**:
@@ -83,7 +95,15 @@ python -m unittest tests/test_api.py
             "diet": ["masité", "high-protein"],
             "meal_type": ["hlavní chod"]
         }
-        ]
+        ],
+        "pagination": {
+            "page": 1,
+            "per_page": 10,
+            "total": 100,
+            "total_pages": 10,
+            "has_next": true,
+            "has_prev": false
+        }
     }
     ```
 
