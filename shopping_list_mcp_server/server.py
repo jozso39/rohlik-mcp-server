@@ -8,6 +8,20 @@ app = Flask(__name__)
 shopping_list_manager = ShoppingListManager()
 recipes = load_recipes('data/Recipes.csv')
 
+# Cache all unique ingredients for fast lookup
+all_ingredients = set()
+for recipe in recipes:
+    if recipe.get('ingredients'):
+        all_ingredients.update(recipe['ingredients'])
+
+@app.route('/get_all_ingredients', methods=['GET'])
+def get_all_ingredients():
+    """Get all unique ingredients from all recipes."""
+    return jsonify({
+        "count": len(all_ingredients),
+        "ingredients": sorted(all_ingredients)
+    }), 200
+
 @app.route('/get_shopping_list', methods=['GET'])
 def get_shopping_list():
     return jsonify({"shopping_list": shopping_list_manager.get_list()}), 200

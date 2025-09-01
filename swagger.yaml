@@ -64,6 +64,35 @@ paths:
                     items:
                       $ref: "#/components/schemas/Recipe"
 
+  /get_all_ingredients:
+    get:
+      summary: Get all ingredients
+      description: Returns a list of all unique ingredients from all recipes
+      responses:
+        "200":
+          description: A list of all unique ingredients
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of unique ingredients
+                    example: 125
+                  ingredients:
+                    type: array
+                    items:
+                      type: string
+                    description: Sorted list of all unique ingredients
+                    example: [
+                      "Badyán",
+                      "Bobkový list",
+                      "Cibule",
+                      "Citron",
+                      "Cukr krupice",
+                    ]
+
   /search_recipes:
     get:
       summary: Search recipes

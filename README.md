@@ -6,7 +6,7 @@ Both of the projects are created as an interview assignmnent to [Rohlík](https:
 
 # Instalation
 ```
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
@@ -82,6 +82,20 @@ python -m unittest tests/test_api.py
             "meal_type": ["hlavní chod"]
         }
         ]
+    }
+    ```
+
+### Get All Ingredients
+- **URL**: `/get_all_ingredients`
+- **Method**: `GET`
+- **Description**: Get all unique ingredients from all recipes
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "count": 125,
+        "ingredients": ["Badyán", "Bobkový list", "Cibule", "Citron", "Cukr krupice", "..."]
     }
     ```
 
