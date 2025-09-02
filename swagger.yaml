@@ -1,17 +1,219 @@
 openapi: 3.0.0
 info:
   title: Shopping List MCP Server
-  description: A Model Context Protocol server for managing shopping lists and recipes
+  description: A Model Context Protocol server for managing shopping lists and recipes with semantic search capabilities
   version: 1.0.0
 servers:
   - url: http://localhost:8001
     description: Local development server
 
+tags:
+  - name: Semantic Search
+    description: ChromaDB-powered semantic search endpoints
+  - name: Recipe Management
+    description: Traditional recipe search and browsing
+  - name: Shopping List
+    description: Shopping list management operations
+
 paths:
+  # Semantic Search Endpoints (ChromaDB)
+  /semantic_search_by_text:
+    get:
+      summary: Semantic search by text query
+      description: Find recipes using semantic similarity based on text query. Returns recipe names only.
+      tags:
+        - Semantic Search
+      parameters:
+        - name: query
+          in: query
+          description: Text to search for semantically
+          required: true
+          schema:
+            type: string
+            example: "chicken soup"
+        - name: limit
+          in: query
+          description: Number of results to return (default 10, max 50)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+            example: 5
+      responses:
+        "200":
+          description: Semantic search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SemanticSearchResponse"
+        "400":
+          description: Bad request - missing query parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /semantic_search_by_ingredient:
+    get:
+      summary: Semantic search by ingredient
+      description: Find recipes containing or related to the specified ingredient. Returns recipe names only.
+      tags:
+        - Semantic Search
+      parameters:
+        - name: ingredient
+          in: query
+          description: Ingredient to search for
+          required: true
+          schema:
+            type: string
+            example: "brambory"
+        - name: limit
+          in: query
+          description: Number of results to return (default 10, max 50)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+            example: 5
+      responses:
+        "200":
+          description: Ingredient-based semantic search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SemanticSearchResponse"
+        "400":
+          description: Bad request - missing ingredient parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /semantic_search_by_diet:
+    get:
+      summary: Semantic search by diet type
+      description: Find recipes matching the specified diet type using semantic understanding. Returns recipe names only.
+      tags:
+        - Semantic Search
+      parameters:
+        - name: diet
+          in: query
+          description: Diet type to search for
+          required: true
+          schema:
+            type: string
+            example: "vegetarian"
+        - name: limit
+          in: query
+          description: Number of results to return (default 10, max 50)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+            example: 5
+      responses:
+        "200":
+          description: Diet-based semantic search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SemanticSearchResponse"
+        "400":
+          description: Bad request - missing diet parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /semantic_search_by_meal_type:
+    get:
+      summary: Semantic search by meal type
+      description: Find recipes matching the specified meal type using semantic understanding. Returns recipe names only.
+      tags:
+        - Semantic Search
+      parameters:
+        - name: meal_type
+          in: query
+          description: Meal type to search for
+          required: true
+          schema:
+            type: string
+            example: "polévka"
+        - name: limit
+          in: query
+          description: Number of results to return (default 10, max 50)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+            example: 5
+      responses:
+        "200":
+          description: Meal type-based semantic search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SemanticSearchResponse"
+        "400":
+          description: Bad request - missing meal_type parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /semantic_search_by_name:
+    get:
+      summary: Semantic search by recipe name
+      description: Find recipes with semantically similar names. Returns recipe names only.
+      tags:
+        - Semantic Search
+      parameters:
+        - name: name
+          in: query
+          description: Recipe name to search for semantically
+          required: true
+          schema:
+            type: string
+            example: "polévka"
+        - name: limit
+          in: query
+          description: Number of results to return (default 10, max 50)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+            example: 5
+      responses:
+        "200":
+          description: Name-based semantic search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SemanticSearchResponse"
+        "400":
+          description: Bad request - missing name parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # Traditional Recipe Management Endpoints
   /remove_ingredients:
     post:
       summary: Remove ingredients from shopping list
       description: Remove specified ingredients from the shopping list. Ingredients not present are ignored.
+      tags:
+        - Shopping List
       requestBody:
         required: true
         content:
@@ -51,6 +253,8 @@ paths:
     get:
       summary: Get all recipes with pagination
       description: Returns a paginated list of all available recipes (10 recipes per page)
+      tags:
+        - Recipe Management
       parameters:
         - name: page
           in: query
@@ -80,6 +284,8 @@ paths:
     get:
       summary: Get all ingredients
       description: Returns a list of all unique ingredients from all recipes
+      tags:
+        - Recipe Management
       responses:
         "200":
           description: A list of all unique ingredients
@@ -109,6 +315,8 @@ paths:
     get:
       summary: Get all diet types
       description: Returns a list of all unique diet types from all recipes
+      tags:
+        - Recipe Management
       responses:
         "200":
           description: A list of all unique diet types
@@ -138,6 +346,8 @@ paths:
     get:
       summary: Get all recipe names
       description: Returns a list of all recipe names from all recipes
+      tags:
+        - Recipe Management
       responses:
         "200":
           description: A list of all recipe names
@@ -167,6 +377,8 @@ paths:
     get:
       summary: Search recipes with pagination
       description: Search recipes by diet, meal type, name, and/or ingredient filters with pagination (10 recipes per page)
+      tags:
+        - Recipe Management
       parameters:
         - name: diet
           in: query
@@ -238,6 +450,8 @@ paths:
     post:
       summary: Add ingredients to shopping list
       description: Add multiple ingredients to the shopping list
+      tags:
+        - Shopping List
       requestBody:
         required: true
         content:
@@ -281,6 +495,8 @@ paths:
     get:
       summary: Get current shopping list
       description: Returns the current shopping list
+      tags:
+        - Shopping List
       responses:
         "200":
           description: Current shopping list
@@ -298,6 +514,8 @@ paths:
     post:
       summary: Clear shopping list
       description: Remove all items from the shopping list
+      tags:
+        - Shopping List
       responses:
         "200":
           description: Shopping list cleared
@@ -312,6 +530,67 @@ paths:
 
 components:
   schemas:
+    SemanticSearchResponse:
+      type: object
+      properties:
+        query:
+          type: string
+          description: The search query (for text/name searches)
+          example: "chicken soup"
+        ingredient:
+          type: string
+          description: The ingredient searched for (for ingredient searches)
+          example: "brambory"
+        diet:
+          type: string
+          description: The diet type searched for (for diet searches)
+          example: "vegetarian"
+        meal_type:
+          type: string
+          description: The meal type searched for (for meal type searches)
+          example: "polévka"
+        name:
+          type: string
+          description: The recipe name searched for (for name searches)
+          example: "polévka"
+        recipe_names:
+          type: array
+          items:
+            type: string
+          description: List of recipe names found through semantic search
+          example: [
+            "Kuřecí polévka s kokosovým mlékem",
+            "Vietnamská polévka",
+            "Bramboračka",
+          ]
+        count:
+          type: integer
+          description: Number of recipes found
+          example: 3
+        chroma_available:
+          type: boolean
+          description: Whether ChromaDB semantic search is available
+          example: true
+        message:
+          type: string
+          description: Information about how to get full recipe details
+          example: "Use /search_recipes?name=<recipe_name> for full details"
+      required:
+        - recipe_names
+        - count
+        - chroma_available
+        - message
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Query parameter required"
+      required:
+        - error
+
     Recipe:
       type: object
       properties:

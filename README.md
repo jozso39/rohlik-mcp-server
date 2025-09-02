@@ -4,12 +4,19 @@ This project implements a simple MCP server that serves as a database for managi
 It was created to serve a [Rohlík AI ReAct Agent](https://github.com/jozso39/rohlik-agent-js). Both of the projects have to be used simultaniously.
 Both of the projects are created as an interview assignmnent to [Rohlík](https://www.rohlik.cz/) company. There is no intention to deploy this code or use it in production.
 
-# Instalation
+# Installation
 ```
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+
+## Setup ChromaDB (Semantic Search)
+After installation, initialize the ChromaDB database for semantic recipe search:
+```
+python load_recipes_to_chroma.py
+```
+This creates a vector database in `./chroma_db/` that enables semantic search capabilities.
 
 # Usage
 ```
@@ -21,7 +28,104 @@ python shopping_list_mcp_server/server.py
 python -m unittest tests/test_api.py
 ```
 
-## Endpoints
+## Semantic Search Endpoints (ChromaDB)
+
+### Semantic Search by Text
+- **URL**: `/semantic_search_by_text`
+- **Method**: `GET`
+- **Query Parameters**:
+  - `query` (required): Text to search for semantically
+  - `limit` (optional): Number of results to return (default: 10, max: 50)
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "query": "chicken soup",
+        "recipe_names": ["Kuřecí polévka s kokosovým mlékem", "Vietnamská polévka", "Bramboračka"],
+        "count": 3,
+        "chroma_available": true,
+        "message": "Use /search_recipes?name=<recipe_name> for full details"
+    }
+    ```
+
+### Semantic Search by Ingredient
+- **URL**: `/semantic_search_by_ingredient`
+- **Method**: `GET`
+- **Query Parameters**:
+  - `ingredient` (required): Ingredient to search for
+  - `limit` (optional): Number of results to return (default: 10, max: 50)
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "ingredient": "brambory",
+        "recipe_names": ["Petrželové brambory", "Vajíčkový salát s bramborami", "Francouzské brambory"],
+        "count": 3,
+        "chroma_available": true,
+        "message": "Use /search_recipes?includes_ingredients=<ingredient> for full details"
+    }
+    ```
+
+### Semantic Search by Diet
+- **URL**: `/semantic_search_by_diet`
+- **Method**: `GET`
+- **Query Parameters**:
+  - `diet` (required): Diet type to search for
+  - `limit` (optional): Number of results to return (default: 10, max: 50)
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "diet": "vegetarian",
+        "recipe_names": ["Bábovka s ořechy", "Bramboračka", "Bramborový salát"],
+        "count": 3,
+        "chroma_available": true,
+        "message": "Use /search_recipes?diet=<diet> for full details"
+    }
+    ```
+
+### Semantic Search by Meal Type
+- **URL**: `/semantic_search_by_meal_type`
+- **Method**: `GET`
+- **Query Parameters**:
+  - `meal_type` (required): Meal type to search for
+  - `limit` (optional): Number of results to return (default: 10, max: 50)
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "meal_type": "polévka",
+        "recipe_names": ["Květáková polévka", "Chřestová polévka", "Kedlubnová polévka"],
+        "count": 3,
+        "chroma_available": true,
+        "message": "Use /search_recipes?meal_type=<meal_type> for full details"
+    }
+    ```
+
+### Semantic Search by Name
+- **URL**: `/semantic_search_by_name`
+- **Method**: `GET`
+- **Query Parameters**:
+  - `name` (required): Recipe name to search for semantically
+  - `limit` (optional): Number of results to return (default: 10, max: 50)
+- **Success Response**:
+  - **Code**: 200
+  - **Content**:
+    ```json
+    {
+        "name": "polévka",
+        "recipe_names": ["Květáková polévka", "Chřestová polévka", "Kedlubnová polévka"],
+        "count": 3,
+        "chroma_available": true,
+        "message": "Use /search_recipes?name=<recipe_name> for full details"
+    }
+    ```
+
+## Traditional Recipe Search Endpoints
 
 ### Get Shopping List
 - **URL**: `/get_shopping_list`
@@ -199,6 +303,29 @@ python -m unittest tests/test_api.py
         "message": "Shopping list cleared"
     }
     ```
+
+## Features
+
+### Semantic Search Integration
+The server includes ChromaDB-powered semantic search capabilities that complement the traditional exact-match search:
+
+- **Semantic Understanding**: Find recipes by meaning, not just exact keywords
+- **Ingredient Discovery**: Find recipes containing similar or related ingredients
+- **Diet-based Discovery**: Semantically understand diet preferences
+- **Recipe Name Similarity**: Find recipes with similar names or concepts
+
+### Two-Layer Search Architecture
+1. **Discovery Layer** (ChromaDB): Returns recipe names based on semantic similarity
+2. **Details Layer** (Traditional API): Use recipe names with existing endpoints to get full recipe details
+
+Example workflow:
+```bash
+# 1. Discover recipes semantically
+curl "http://127.0.0.1:8001/semantic_search_by_text?query=comfort food&limit=5"
+
+# 2. Get full details for interesting recipes
+curl "http://127.0.0.1:8001/search_recipes?name=Bramboračka"
+```
 
 ## TODO: Future Enhancements
 

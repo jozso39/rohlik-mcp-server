@@ -1,6 +1,11 @@
 from flask import Flask, request, jsonify
-from shopping_list_manager import ShoppingListManager
-from recipe_loader import load_recipes
+from .shopping_list_manager import ShoppingListManager
+from .recipe_loader import load_recipes
+# Import ChromaDB integration
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from chroma_flask_integration import semantic_search, ingredient_search, filter_search, is_chroma_available
 
 app = Flask(__name__)
 
@@ -217,6 +222,102 @@ def remove_ingredients():
     return jsonify({
         "shopping_list": shopping_list_manager.get_list()
     }), 200
+
+# ChromaDB Semantic Search Routes
+@app.route('/semantic_search_by_text', methods=['GET'])
+def semantic_search_by_text():
+    """Semantic search by text query"""
+    query = request.args.get('query')
+    if not query:
+        return jsonify({'error': 'Query parameter required'}), 400
+    
+    limit = min(int(request.args.get('limit', 10)), 50)
+    
+    recipe_names = semantic_search(query, limit)
+    
+    return jsonify({
+        'query': query,
+        'recipe_names': recipe_names,
+        'count': len(recipe_names),
+        'chroma_available': is_chroma_available(),
+        'message': 'Use /search_recipes?name=<recipe_name> for full details'
+    })
+
+@app.route('/semantic_search_by_ingredient', methods=['GET'])
+def semantic_search_by_ingredient():
+    """Semantic search by ingredient"""
+    ingredient = request.args.get('ingredient')
+    if not ingredient:
+        return jsonify({'error': 'Ingredient parameter required'}), 400
+    
+    limit = min(int(request.args.get('limit', 10)), 50)
+    
+    recipe_names = ingredient_search(ingredient, limit)
+    
+    return jsonify({
+        'ingredient': ingredient,
+        'recipe_names': recipe_names,
+        'count': len(recipe_names),
+        'chroma_available': is_chroma_available(),
+        'message': 'Use /search_recipes?includes_ingredients=<ingredient> for full details'
+    })
+
+@app.route('/semantic_search_by_diet', methods=['GET'])
+def semantic_search_by_diet():
+    """Semantic search by diet type"""
+    diet = request.args.get('diet')
+    if not diet:
+        return jsonify({'error': 'Diet parameter required'}), 400
+    
+    limit = min(int(request.args.get('limit', 10)), 50)
+    
+    recipe_names = filter_search(diet=diet, limit=limit)
+    
+    return jsonify({
+        'diet': diet,
+        'recipe_names': recipe_names,
+        'count': len(recipe_names),
+        'chroma_available': is_chroma_available(),
+        'message': 'Use /search_recipes?diet=<diet> for full details'
+    })
+
+@app.route('/semantic_search_by_meal_type', methods=['GET'])
+def semantic_search_by_meal_type():
+    """Semantic search by meal type"""
+    meal_type = request.args.get('meal_type')
+    if not meal_type:
+        return jsonify({'error': 'Meal type parameter required'}), 400
+    
+    limit = min(int(request.args.get('limit', 10)), 50)
+    
+    recipe_names = filter_search(meal_type=meal_type, limit=limit)
+    
+    return jsonify({
+        'meal_type': meal_type,
+        'recipe_names': recipe_names,
+        'count': len(recipe_names),
+        'chroma_available': is_chroma_available(),
+        'message': 'Use /search_recipes?meal_type=<meal_type> for full details'
+    })
+
+@app.route('/semantic_search_by_name', methods=['GET'])
+def semantic_search_by_name():
+    """Semantic search by recipe name (alias for text search)"""
+    name = request.args.get('name')
+    if not name:
+        return jsonify({'error': 'Name parameter required'}), 400
+    
+    limit = min(int(request.args.get('limit', 10)), 50)
+    
+    recipe_names = semantic_search(name, limit)
+    
+    return jsonify({
+        'name': name,
+        'recipe_names': recipe_names,
+        'count': len(recipe_names),
+        'chroma_available': is_chroma_available(),
+        'message': 'Use /search_recipes?name=<recipe_name> for full details'
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, port=8001)

@@ -25,3 +25,6 @@ env/
 # OS specific
 .DS_Store
 Thumbs.db
+
+# ChromaDB vector database
+chroma_db/
