@@ -51,33 +51,33 @@ async def handle_list_tools() -> list[Tool]:
     return [
         Tool(
             name="search_recipes",
-            description="Search for recipes based on various criteria including diet, meal type, ingredients, and name",
+            description="Vyhledání receptů podle různých kritérií včetně typu stravy, druhu jídla, ingrediencí a názvu",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "diet": {
                         "type": "string",
-                        "description": "Filter by diet type (e.g., 'vegetarian', 'vegan', 'high-protein')"
+                        "description": "Filtrování podle typu stravy (např. 'vegetarian', 'vegan', 'high-protein')"
                     },
                     "meal_type": {
                         "type": "string", 
-                        "description": "Filter by meal type (e.g., 'polévka', 'hlavní chod', 'desert')"
+                        "description": "Filtrování podle druhu jídla (např. 'polévka', 'hlavní chod', 'desert')"
                     },
                     "name": {
                         "type": "string",
-                        "description": "Search recipes by name (partial match)"
+                        "description": "Vyhledání receptů podle názvu (částečná shoda)"
                     },
                     "includes_ingredients": {
                         "type": "string",
-                        "description": "Comma-separated list of ingredients that must be present"
+                        "description": "Seznam ingrediencí oddělených čárkou, které musí být přítomny"
                     },
                     "excludes_ingredients": {
                         "type": "string", 
-                        "description": "Comma-separated list of ingredients that must NOT be present"
+                        "description": "Seznam ingrediencí oddělených čárkou, které NESMÍ být přítomny"
                     },
                     "limit": {
                         "type": "integer",
-                        "description": "Maximum number of recipes to return (default: 10, max: 50)",
+                        "description": "Maximální počet vrácených receptů (výchozí: 10, max: 50)",
                         "minimum": 1,
                         "maximum": 50,
                         "default": 10
@@ -87,7 +87,7 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_shopping_list", 
-            description="Get the current shopping list",
+            description="Získání aktuálního nákupního seznamu",
             inputSchema={
                 "type": "object",
                 "properties": {}
@@ -95,14 +95,14 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="add_ingredients_to_shopping_list",
-            description="Add ingredients to the shopping list",
+            description="Přidání ingrediencí do nákupního seznamu",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "ingredients": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "List of ingredients to add to shopping list"
+                        "description": "Seznam ingrediencí k přidání do nákupního seznamu"
                     }
                 },
                 "required": ["ingredients"]
@@ -110,14 +110,14 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="remove_ingredients_from_shopping_list",
-            description="Remove ingredients from the shopping list", 
+            description="Odebrání ingrediencí z nákupního seznamu", 
             inputSchema={
                 "type": "object",
                 "properties": {
                     "ingredients": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "List of ingredients to remove from shopping list"
+                        "description": "Seznam ingrediencí k odebrání z nákupního seznamu"
                     }
                 },
                 "required": ["ingredients"]
@@ -125,7 +125,7 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="clear_shopping_list",
-            description="Clear all ingredients from the shopping list",
+            description="Vymazání všech ingrediencí z nákupního seznamu",
             inputSchema={
                 "type": "object", 
                 "properties": {}
@@ -133,13 +133,13 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_recipe_details",
-            description="Get detailed information about a specific recipe by name",
+            description="Získání detailních informací o konkrétním receptu podle názvu",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "recipe_name": {
                         "type": "string",
-                        "description": "Exact name of the recipe to get details for"
+                        "description": "Přesný název receptu pro získání detailů"
                     }
                 },
                 "required": ["recipe_name"]
@@ -147,7 +147,7 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_all_ingredients",
-            description="Get all available ingredients from the recipe database",
+            description="Získání seznamu všech dostupných ingrediencí z databáze receptů",
             inputSchema={
                 "type": "object",
                 "properties": {}
@@ -155,7 +155,7 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_all_diet_types", 
-            description="Get all available diet types from the recipe database",
+            description="Získání seznamu všech dostupných typů stravy z databáze receptů",
             inputSchema={
                 "type": "object",
                 "properties": {}
@@ -163,7 +163,7 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_all_meal_types", 
-            description="Get all available meal types from the recipe database",
+            description="Získání seznamu všech dostupných druhů jídel z databáze receptů",
             inputSchema={
                 "type": "object",
                 "properties": {}
