@@ -2,3 +2,4 @@ Flask==2.2.2
 requests==2.31.0
 PyYAML==6.0.1  # For swagger.yaml parsing
 Werkzeug==2.2.2
+mcp
